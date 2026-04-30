@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Open in mpv",
+  "version": "0.2.0",
+  "description": "Right-click any video link to open it in mpv media player.",
+  "permissions": [
+    "contextMenus",
+    "nativeMessaging"
+  ],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}
