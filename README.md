@@ -181,6 +181,10 @@ Verify the extension ID in `~/.config/BraveSoftware/Brave-Browser/NativeMessagin
 **"No video" on some sites**
 Some sites need cookies. Add `ytdl-raw-options=cookies-from-browser=brave` to `~/.config/mpv/mpv.conf`.
 
+## Acknowledgements
+
+This project was built with the assistance of [Claude Code](https://claude.ai/claude-code), an AI coding assistant by Anthropic.
+
 ## License
 
 [MIT](LICENSE.md)
