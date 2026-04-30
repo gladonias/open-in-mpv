@@ -10,7 +10,7 @@
 #   open-in-mpv.sh <URL>          # Pass URL as argument
 #   open-in-mpv.sh --clipboard    # Read URL from clipboard
 #
-# Dependencies: mpv, yt-dlp, xclip (for clipboard mode), notify-send (optional)
+# Dependencies: mpv, yt-dlp, xclip or wl-clipboard (for clipboard mode), notify-send (optional)
 #
 # License: MIT
 # ==============================================================================
@@ -50,6 +50,20 @@ is_valid_url() {
     return 1
 }
 
+# Detect display server
+is_wayland() {
+    [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]
+}
+
+# Read clipboard contents
+read_clipboard() {
+    if is_wayland; then
+        wl-paste --no-newline 2>/dev/null || true
+    else
+        xclip -selection clipboard -o 2>/dev/null || true
+    fi
+}
+
 # Check that all required dependencies are installed
 check_dependencies() {
     local missing=()
@@ -62,14 +76,17 @@ check_dependencies() {
         missing+=("yt-dlp")
     fi
 
-    if [[ "${1:-}" == "--clipboard" ]] && ! command -v xclip &>/dev/null; then
-        missing+=("xclip")
+    if [[ "${1:-}" == "--clipboard" ]]; then
+        if is_wayland; then
+            command -v wl-paste &>/dev/null || missing+=("wl-clipboard")
+        else
+            command -v xclip &>/dev/null || missing+=("xclip")
+        fi
     fi
 
     if [[ ${#missing[@]} -gt 0 ]]; then
         notify "Open in mpv — Error" "Missing dependencies: ${missing[*]}" "critical"
         echo "Error: Missing dependencies: ${missing[*]}" >&2
-        echo "Install them with: sudo apt install ${missing[*]}" >&2
         exit 1
     fi
 }
@@ -82,7 +99,7 @@ main() {
     # Determine URL source: argument or clipboard
     if [[ "${1:-}" == "--clipboard" ]]; then
         check_dependencies "--clipboard"
-        url="$(xclip -selection clipboard -o 2>/dev/null || true)"
+        url="$(read_clipboard)"
     elif [[ -n "${1:-}" ]]; then
         check_dependencies
         url="$1"

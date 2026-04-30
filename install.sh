@@ -72,14 +72,22 @@ install() {
 
     local deps_ok=true
 
-    for dep in mpv yt-dlp xclip notify-send; do
+    # Detect clipboard tool based on display server
+    local clipboard_tool="xclip"
+    local clipboard_pkg="xclip"
+    if [[ "${XDG_SESSION_TYPE:-}" == "wayland" ]]; then
+        clipboard_tool="wl-paste"
+        clipboard_pkg="wl-clipboard"
+    fi
+
+    for dep in mpv yt-dlp "$clipboard_tool" notify-send; do
         if command -v "$dep" &>/dev/null; then
             success "Found: $dep"
         else
             if [[ "$dep" == "notify-send" ]]; then
                 warn "Optional: $dep not found (desktop notifications won't work)"
             else
-                error "Missing: $dep"
+                error "Missing: $dep (package: ${dep})"
                 deps_ok=false
             fi
         fi
@@ -88,9 +96,9 @@ install() {
     if [[ "$deps_ok" == false ]]; then
         echo ""
         error "Please install missing dependencies first."
-        echo "  Arch/CachyOS:    sudo pacman -S mpv yt-dlp xclip libnotify"
-        echo "  Debian/Ubuntu:   sudo apt install mpv yt-dlp xclip libnotify-bin"
-        echo "  Fedora:          sudo dnf install mpv yt-dlp xclip libnotify"
+        echo "  Arch/CachyOS:    sudo pacman -S mpv yt-dlp $clipboard_pkg libnotify"
+        echo "  Debian/Ubuntu:   sudo apt install mpv yt-dlp $clipboard_pkg libnotify-bin"
+        echo "  Fedora:          sudo dnf install mpv yt-dlp $clipboard_pkg libnotify"
         echo ""
         exit 1
     fi

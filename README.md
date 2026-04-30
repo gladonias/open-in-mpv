@@ -18,7 +18,7 @@ Copy a link and press a hotkey, or right-click any link in your browser -- mpv s
 |---|---|---|
 | `mpv` | Yes | Media player |
 | `yt-dlp` | Yes | Fetches streams from YouTube and other sites |
-| `xclip` | Yes (X11) | Reads URLs from the clipboard |
+| `xclip` or `wl-clipboard` | Yes | Reads URLs from the clipboard (auto-detected) |
 | `libnotify` / `notify-send` | Optional | Desktop notifications |
 | `python3` | Yes (browser extension only) | Runs the native messaging host |
 
@@ -170,7 +170,7 @@ open-in-mpv/
 Make sure `yt-dlp` is up to date: `yt-dlp -U`
 
 **Keyboard shortcut doesn't work**
-Check that `xclip` is installed and `~/.local/bin` is in your `PATH`.
+Check that `xclip` (X11) or `wl-clipboard` (Wayland) is installed and `~/.local/bin` is in your `PATH`.
 
 **Browser extension shows no right-click menu**
 Check `brave://extensions` -- the extension must be enabled. Open the console (F12) for errors.
